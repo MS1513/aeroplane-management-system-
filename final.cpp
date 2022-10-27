@@ -519,4 +519,54 @@ void Flight::addFlight(){
 	cout << "Flight No: "<< this -> flightNo << " was successfully added!" << endl;
 }
 
+void Flight::displaySchedule(){
+	string l_time, a_time; // departure and arrivale time
+	stringstream convert;
+	stringstream convert2;
+		cout << "\n\t\t\t\t FLIGHT SCHEDULE" << endl << endl;
+		cout << left << setw(10) << "FLIGHT" << left << setw(10) << "FROM" << left << setw(10) << "TO" << left << setw(10) << "LEAVE" << left << setw(10) << "ARRIVE" << left << setw(10) << "COST" << left << setw(10) << "TYPE" << left << setw(10) << "SEATS" << left << setw(10) << "BOOKED" << endl;
+		for (std::list<Flight>::iterator i = flist.begin(); i != flist.end(); ++i) {
+				convert.str(std::string());	// clear stringstream "convert"
+				convert2.str(std::string());	// clear stringstream "convert2"
+				convert << i -> t_leave.hour;
+				convert2 << i -> t_leave.min;
+				l_time = convert.str() + ":" + convert2.str();
+				convert.str(std::string());	// clear stringstream "convert"
+				convert2.str(std::string());	// clear stringstream "convert2"
+				convert << i -> t_arrive.hour;
+				convert2 << i -> t_arrive.min;
+				a_time = convert.str() + ":" + convert2.str();
+				cout << left << setw(10) << i -> flightNo << left << setw(10) << i -> from << left << setw(10) << i -> to << left << setw(10) << l_time << left << setw(10) << a_time << left << setw(10) << i -> cost << left << setw(10) << i -> plane_type << left << setw(10) << i -> seats << left << setw(10) << i -> booked_seats << endl;
+		}
+		cout << endl;
+}
+
+void Flight::resSeat(int num, int val){
+	for (std::list<Flight>::iterator i = flist.begin(); i != flist.end(); ++i){
+		if( num == (i -> flightNo) ){
+			i -> booked_seats += val ;
+			break;
+		}
+	}
+}
+
+bool Flight::flightExists(int num){
+	for (std::list<Flight>::iterator i = flist.begin(); i != flist.end(); ++i){
+		if (num == i -> flightNo){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Flight::checkForSeats(int num){
+	for (std::list<Flight>::iterator i = flist.begin(); i != flist.end(); ++i){
+		if( num == (i -> flightNo) ){
+				if( i -> seats == i -> booked_seats )
+					return false;
+				else
+					return true;
+		}
+	}
+}
 
