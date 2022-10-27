@@ -320,4 +320,203 @@ void Menu::exit_prog(){
 	cout << "Thank you for using our system! \n";
 	exit(1); // exit
 }
+/* ----FUNCTIONS OF CLASS Flight---- */
+
+void Flight::addFlight(){
+	/* ----INITIALISE VARS----*/
+	bool flag = false; // used in loops
+	/* --Check for arrival, departure time validity (USED ONLY IN BOARDING & ARRIVING TIME)-- */
+	vector<string> fields; // stores, splitted,  user input to be checked
+	string temp; // stores user's input temp
+	char* pch; // stores result of function strtok()
+	int hour; // stores hour
+	int min; // store minutes
+	cout << "Add new flights by giving the following attributes: \n";
+	cin.clear();
+	cin.ignore(256,'\n');
+
+	/* --FLIGHT NUBMER-- */
+	cout << "Flight Number: ";
+	// get user's input
+	getline(cin, temp);
+	do{
+		flag = true;
+		// check input
+		if (!checkNumber(temp)){
+			cout << "Please insert a valid Flight Number! " << endl;
+			flag = false;
+			getline(cin, temp);
+		}else if (Flight::flightExists( atoi(temp.c_str()) )) {
+			cout << "This Flight already exists!" << endl;
+			cout << "Please insert a valid Flight Number!" << endl;
+			flag = false;
+			getline(cin, temp);
+		}else {
+			flag = true;
+			this -> flightNo = atoi(temp.c_str());
+		}
+	}while(!flag);
+
+	/* --DEPARTURE-- */
+	cout << "Departure: ";
+	flag = false;
+	// check input
+	LOOP:do{
+		getline(cin, temp);
+		if ( (temp.length() <= 10) && (checkString(temp)) ){
+			this -> from = temp;
+			flag = true;
+		}else {
+			cout << "Please insert a valid Departure city! ";
+			goto LOOP;
+		}
+	}while(!flag);
+
+	/* --DESTINATION-- */
+	cout << "Destination: ";
+	flag = false;
+	// check input
+	LOOP2:do{
+		getline(cin, temp);
+		if ( (temp.length() <= 10) && (checkString(temp)) && (temp.compare(this -> from)) ){
+			this -> to = temp;
+			flag = true;
+		}else{
+			cout << "Please insert a valid Destination city! ";
+			goto LOOP2;
+		}
+	}while(!flag);
+
+	/* --DEPARTURE TIME-- */
+	cout << "Boarding time (e.g. 19:40): "; //ask from user for the boarding time
+	flag = false;
+	// check input
+	LOOP3:do{
+		getline(cin, temp);
+		if( temp.length() != 5 || !checkTime(temp) ){
+			cout << "Please insert a valid boarding time (e.g. 19:40)! ";
+			goto LOOP3;
+		}
+		char t_temp[temp.length()];
+		strcpy(t_temp, temp.c_str());
+		//split string
+		pch = strtok(t_temp, ":");
+		while(pch != NULL){
+			fields.push_back(pch);
+			pch = strtok(NULL, ":");
+		}
+		hour = atoi(fields[0].c_str());
+		min = atoi(fields[1].c_str());
+		// check time
+		if ((hour >=0 && hour<=23) && (min>=0 && min <=59)){
+			this -> t_leave.hour = hour;
+			this -> t_leave.min = min;
+			flag = true;
+		}else{
+			cout << "Please insert a valid boarding time (e.g. 19:40)! ";
+			fields.clear();
+		}
+
+	}while(!flag);
+
+	/* --ARRIVAL TIME-- */
+	cout << "Arriving time (e.g. 21:40): ";
+	flag = false;
+	fields.clear();	// clear fields (because it was used before, at "DEPARTURE TIME")
+	// check input
+	LOOP4:do{
+		getline(cin, temp);
+		if( temp.length() > 5 || !checkTime(temp) ){
+			cout << "Please insert a valid boarding time (e.g. 19:40)! ";
+			goto LOOP4;
+		}
+		char t_temp[temp.length()];
+		strcpy(t_temp, temp.c_str());
+		//split string
+		pch = strtok(t_temp, ":");
+		while(pch != NULL){
+			fields.push_back(pch);
+			pch = strtok(NULL, ":");
+		}
+		hour = atoi(fields[0].c_str());
+		min = atoi(fields[1].c_str());
+
+		// check validity of time
+		if ((hour >=0 && hour<=23) && (min>=0 && min <=59)){
+			this -> t_arrive.hour = hour;
+			this -> t_arrive.min = min;
+			flag = true;
+		}else{
+			cout << "Please insert a valid arriving time (e.g. 19:40)! ";
+			fields.clear();
+		}
+
+	}while(!flag);
+
+	/* --TICKET COST-- */
+	cout << "Ticket price: ";
+	LOOP5:do{
+		getline(cin, temp);
+		flag = true;
+		// check input
+		if (!checkNumber(temp)){
+			cout << "Please insert a valid ticket price!" << endl;
+			flag = false;
+			goto LOOP5;
+		}else{
+			flag = true;
+			this -> cost = atoi(temp.c_str());
+		}
+	}while(!flag);
+
+	/* --AIRCRAFT TYPE-- */
+	cout << "Aeroplane type: ";
+	getline(cin, this -> plane_type);
+	while(this -> plane_type.empty()){
+		cout << "Please insert a valid Aeroplane type!" << endl;
+		getline(cin, this -> plane_type);
+	}
+
+	/* --No OF SEATS-- */
+	cout << "Number of seats: ";
+	LOOP6:do{
+		getline(cin, temp);
+		flag = true;
+		// check input
+		if (!checkNumber(temp)){
+			cout << "Please insert a valid number of seats!" << endl;
+			flag = false;
+			goto LOOP6;
+		}else{
+			flag = true;
+			this -> seats = atoi(temp.c_str());
+		}
+	}while(!flag);
+
+	/* --No of BOOKED SEATS-- */
+	cout << "Number of booked seats: ";
+	LOOP7:do{
+		getline(cin, temp);
+		flag = true;
+		// check input
+		if (!checkNumber(temp)){
+			cout << "Please insert a valid number of booked seats!" << endl;
+			flag = false;
+			goto LOOP7;
+		}else if ( atoi(temp.c_str()) > this -> seats ) {
+			cout << "Booked seats must be less than plane's seats!" << endl;
+			flag = false;
+			goto LOOP7;
+		}else {
+			flag = true;
+			this -> booked_seats = atoi(temp.c_str());
+		}
+	}while(!flag);
+	cout << endl;
+	flist.push_back(*this); // add object to the flist
+	Queue q(this -> flightNo); // create new queue for the newly added flight
+	qlist.push_back(q); // add object to the qlist
+	cout << "Flight No: "<< this -> flightNo << " was successfully added!" << endl;
+}
+
 
