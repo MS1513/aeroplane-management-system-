@@ -273,3 +273,46 @@ void Menu::displayMenu(){
 			select(selection);
 	}while(true);
 }
+void  Menu::select(int selection){
+	Flight f; // FLight's object
+	Person p; // class Person's object
+	string temp; // temp to store input
+	switch(selection){
+		case 1:
+			f.addFlight();
+			break;
+		case 2:
+			if (!flist.empty()) {
+				Flight::displaySchedule();
+			}else {
+				cout << "There are no scheduled flights!" << endl;
+			}
+			break;
+		case 3:
+			if (!plist.empty()){
+				cout << "Please insert passport number: ";
+				cin >> temp;
+				while (!Person::displayPersonInfo( atoi(temp.c_str()) )) {
+					cout << "Wrong passport number!" << endl;
+					cin.clear();
+					cin.ignore(256,'\n');
+					cin >> temp;
+					cout << endl;
+				}
+			}else{
+				cout << "There are no registered clients at the moment!" << endl;
+			}
+			break;
+		case 4:
+			p.book();
+			break;
+		case 5:
+			p.cancel();
+			break;
+		case 6:
+			Menu::exit_prog();
+			break;
+		default:
+			cout << "Invalid selection \n";
+	}
+}
