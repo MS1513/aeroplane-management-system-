@@ -316,3 +316,8 @@ void  Menu::select(int selection){
 			cout << "Invalid selection \n";
 	}
 }
+void Menu::exit_prog(){
+	cout << "Thank you for using our system! \n";
+	exit(1); // exit
+}
+
