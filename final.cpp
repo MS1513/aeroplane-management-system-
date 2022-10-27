@@ -569,4 +569,152 @@ bool Flight::checkForSeats(int num){
 		}
 	}
 }
+/* ----FUNCTIONS OF CLASS Person---- */
+void Person::book(){
+	/* ----INITIALISE VARS----*/
+	/* --FLIGHTS-- */
+	string temp; //temp to store user's input, to be checked
+	int num; // stores flight's number, after successful check
+	/* --VARS FOR NON DIRECT FLIGHTS-- */
+	int counter = 1; // stores the amount(>=2) of the non-direct flights
+	string choice; // stores user's choice for adding or not more flights to their reservation
+	Time tArriving;
+	Time tLeaving;
+	string Departure;
+	string Destination;
+	list<int> nums; // store flights' numbers
+	list<int>::iterator i1 = nums.begin(); //iterator for accessing List nums
+
+	/* --VAR FOR LOOPS-- */
+	bool flag = true;
+	cin.clear();
+	cin.ignore(256,'\n');
+	if (!flist.empty()) {
+		cout << "Insert y (yes) for a new client or n (no) for an existing client. ";
+		getline(cin, choice);
+		// enter if client is new
+		if (choice == "y" || choice == "Y") {
+			cout << "Please give us your personal info. " << endl;
+			/* --NAME-- */
+			cout << "Name: ";
+			flag = false;
+			// check input
+			LOOP8:do{
+				getline(cin, this -> name);
+				if ( (this -> name.length() <= 10) && (checkString(this -> name)) ){
+					flag = true;
+				}else {
+					cout << "Please insert a valid Name! ";
+					goto LOOP8;
+				}
+			}while(!flag);
+
+			/* --SURNAME-- */
+			cout << "Surname: ";
+			flag = false;
+			// check input
+			LOOP9:do{
+				getline(cin, this -> surname);
+				if ( (this -> surname.length() <= 10) && (checkString(this -> surname)) ){
+					flag = true;
+				}else {
+					cout << "Please insert a valid Surname! ";
+					goto LOOP9;
+				}
+			}while(!flag);
+
+			/* --PASPPORT No-- */
+			cout << "Passport number: ";
+			// check input
+			LOOP10:do{
+				getline(cin, temp);
+				flag = true;
+				if (!checkNumber(temp)){
+					cout << "Please insert a valid passport number" << endl;
+					flag = false;
+					goto LOOP10;
+				}else if (!Person::uniquePass( atoi(temp.c_str()) )) {
+					cout << "Please check the validity of your passport number" << endl;
+					flag = false;
+					goto LOOP10;
+				}else{
+					flag = true;
+					this -> passportNo = atoi(temp.c_str());
+				}
+			}while(!flag);
+
+			/* --NATIONALLITY-- */
+			cout << "Nationallity: ";
+			flag = false;
+			// check input
+			LOOP11:do{
+				getline(cin, this -> nationallity);
+				if ( (this -> nationallity.length() <= 10) && (checkString(this -> nationallity)) ){
+					flag = true;
+				}else {
+					cout << "Please insert a valid Nationallity! ";
+					goto LOOP11;
+				}
+			}while(!flag);
+
+			/* --ADDRESS-- */
+			cout << "Address: ";
+			getline(cin, this -> address);
+			/* --TEL-- */
+			cout << "Telephone: ";
+			getline(cin, temp);
+			// check input
+			while (!checkNumber(temp)) {
+				cout << "Please insert a valid telephone number!" << endl;
+				getline(cin, temp);
+			}
+			this -> tel = atoi(temp.c_str());
+		}else { // existing customer
+			cout << "Pleas give us your passport No: ";
+			getline(cin, temp);
+			// check input
+			while(!checkNumber(temp)){
+				cout << "Please insert a valid passport number!" << endl;
+				flag = false;
+				getline(cin, temp);
+			}
+			// check if passport No is unique
+			if ( !(Person::uniquePass( atoi(temp.c_str()) ))) {
+					for (std::list<Person>::iterator i = plist.begin(); i != plist.end(); ++i){
+						if (atoi(temp.c_str()) == i -> passportNo) {
+							this -> name = i -> name;
+							this -> surname = i -> surname;
+							this -> passportNo = i -> passportNo;
+							this -> nationallity = i -> nationallity;
+							this -> address = i -> address;
+							this -> tel = i -> tel;
+
+							for (std::list<int>::iterator i2 = i->flights.begin(); i2 != i->flights.end(); ++i2) {
+								this -> flights.push_back(*i2);
+							}
+             				// after copying the customers info,
+							// delete the old object pointing to them
+							i = plist.erase(i);
+							break;
+						}
+					}
+			}else {
+				cout << "Wrong passport number!" << endl;
+				return;
+			}
+		}
+		// display flights
+		Flight::displaySchedule();
+		/* --FLIGTH No-- */
+		cout << "\n\nEnter the number of the flight you 're intrested in: ";
+		getline(cin, temp);
+		flag = true;
+		// check input
+		while ( !checkNumber(temp) && !Flight::flightExists(atoi(temp.c_str())) ) {
+			cout << "Please insert a valid Flight No!" << endl;
+			getline(cin, temp);
+		}
+		num = atoi(temp.c_str());
+		/*
+
 
