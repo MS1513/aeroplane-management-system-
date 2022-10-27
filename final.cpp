@@ -240,3 +240,36 @@ bool Queue::isEmpty(){
  }
  return false;
 }
+/* ----FUNCTIONS OF CLASS Menu---- */
+
+void Menu::displayMenu(){
+	int selection;	// user's menu choice
+	string temp; // temp to store user's input
+	do{
+			cout << "-----------------------------------------------";
+
+			cout << "\n\t AIRLINE RESERVATION SYSTEM \n\n";
+			cout << "Please pick an option from the menu below. \n";
+			cout << "1. Add new flights \n";
+			cout << "2. Display flight schedule \n";
+			cout << "3. Display passenger personal info \n";
+			cout << "4. Book reservation \n";
+			cout << "5. Cancel reservation \n";
+			cout << "6. Exit \n\n";
+
+			cout << "-----------------------------------------------" << endl;
+
+			cout << "Enter the number of a menu option: ";
+			cin >> temp;
+			// check validity of input
+			while (!checkNumber(temp)) {
+				cout << "Please enter a number!" << endl;
+				cin.clear();
+				cin.ignore(256,'\n');
+				cin >> temp;
+			}
+			cout << endl;
+			selection = atoi(temp.c_str());
+			select(selection);
+	}while(true);
+}
